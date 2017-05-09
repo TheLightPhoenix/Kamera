@@ -2,6 +2,9 @@
 #include "opencv2/imgproc/imgproc.hpp"
 #include <string>
 #include <iostream>
+#include <Windows.h>
+#include <Winuser.h>
+#include <Winable.h>
 
 using namespace cv;
 using namespace std;
@@ -21,6 +24,9 @@ int main()
     int lowerb = 255, upperb = 255;
     createTrackbar( "Thresh lb", window_name[2], &lowerb, 255, NULL );
     createTrackbar( "Thresh ub", window_name[2], &upperb, 255, NULL );
+    namedWindow("Kulka", CV_WINDOW_AUTOSIZE);
+    Mat kulka;
+    Point srodek;
     while ( waitKey(20) != 27 )
     {
         capture >> frame;
@@ -57,6 +63,7 @@ int main()
             line( img, Point(boundRect.x + boundRect.width, boundRect.y), Point(boundRect.x, boundRect.y + boundRect.height), Scalar(250, 125, 125), 2, 8, 0);
             string s;
             stringstream out;
+            srodek = Point(boundRect.x + boundRect.width/2, boundRect.y + boundRect.height/2);
             out << boundRect.x + boundRect.width/2 << "x" << boundRect.y + boundRect.height/2;
             s = out.str();
             putText( img, s, Point(50, 50), CV_FONT_HERSHEY_COMPLEX, 1, Scalar(20, 40, 80), 3, 8 );
@@ -67,6 +74,25 @@ int main()
 
         imshow(window_name[0], img );
         imshow(window_name[2], binary);
+
+        kulka = Mat::zeros( img.size(), CV_8UC3 );
+        circle(kulka, srodek, 3, Scalar(255, 0, 0));
+        SetCursorPos(srodek.x*2, srodek.y*2);
+        imshow("Kulka", kulka);
+        if(waitKey(10) == 'm')
+        {
+            INPUT    Input={0};
+            // left down
+            Input.type      = INPUT_MOUSE;
+            Input.mi.dwFlags  = MOUSEEVENTF_LEFTDOWN;
+            SendInput(1,&Input,sizeof(INPUT));
+
+            // left up
+            ZeroMemory(&Input,sizeof(INPUT));
+            Input.type      = INPUT_MOUSE;
+            Input.mi.dwFlags  = MOUSEEVENTF_LEFTUP;
+            SendInput(1,&Input,sizeof(INPUT));
+        }
     }
     capture.release();
     return 0;
