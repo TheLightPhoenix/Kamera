@@ -14,20 +14,21 @@ int main()
     VideoCapture capture = VideoCapture(0);
     string window_name [] = { "Kamera", "Contour", "Binary" };
     Mat frame, img, hsv_img, binary;
-
-    //***
     Mat cont;
-    //***
+
+    bool mysz = true;
 
     vector<Mat> hsv_split;
-    for ( int i = 0; i < 3; i++ ) namedWindow(window_name[i], CV_WINDOW_AUTOSIZE);
+    //for ( int i = 0; i < 3; i++ ) namedWindow(window_name[i], CV_WINDOW_AUTOSIZE);
     int lowerb = 255, upperb = 255;
-    createTrackbar( "Thresh lb", window_name[2], &lowerb, 255, NULL );
-    createTrackbar( "Thresh ub", window_name[2], &upperb, 255, NULL );
+    /*createTrackbar( "Thresh lb", window_name[2], &lowerb, 255, NULL );
+    createTrackbar( "Thresh ub", window_name[2], &upperb, 255, NULL );*/
     namedWindow("Kulka", CV_WINDOW_AUTOSIZE);
     Mat kulka;
     Point srodek;
-    while ( waitKey(20) != 27 )
+    bool klikniecie = false;
+    char m = 'l',key = 'p';
+    while ( key != 27 )
     {
         capture >> frame;
         flip(frame, img,1);
@@ -45,6 +46,38 @@ int main()
         findContours( cont, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
         int max = 0, i_cont = -1;
         Mat drawing = Mat::zeros( cont.size(), CV_8UC3 );
+        if(mysz)
+        {
+            if(contours.size()==0 && !klikniecie)
+            {
+                klikniecie = true;
+                INPUT    Input={0};
+                // left down
+
+                Input.type      = INPUT_MOUSE;
+                if(m=='l')
+                    Input.mi.dwFlags  = MOUSEEVENTF_LEFTDOWN;
+                else
+                    Input.mi.dwFlags  = MOUSEEVENTF_RIGHTDOWN;
+                SendInput(1,&Input,sizeof(INPUT));
+                cout << 0 << endl;
+            }
+
+            if(contours.size() > 0 && klikniecie)
+            {
+                klikniecie = false;
+                INPUT    Input={0};
+                // left down
+                Input.type      = INPUT_MOUSE;
+                if(m=='l')
+                    Input.mi.dwFlags  = MOUSEEVENTF_LEFTUP;
+                else
+                    Input.mi.dwFlags  = MOUSEEVENTF_RIGHTUP;
+                SendInput(1,&Input,sizeof(INPUT));
+                cout << 1 << endl;
+            }
+        }
+
         for( int i = 0; i< contours.size(); i++ )
         {
             if ( abs(contourArea(Mat(contours[i]))) > max )
@@ -69,17 +102,22 @@ int main()
             putText( img, s, Point(50, 50), CV_FONT_HERSHEY_COMPLEX, 1, Scalar(20, 40, 80), 3, 8 );
             drawContours( drawing,  contours, i_cont, Scalar(125, 125, 250), 2 );
         }
-        imshow(window_name[1], drawing);
+        //imshow(window_name[1], drawing);
         //***
 
-        imshow(window_name[0], img );
-        imshow(window_name[2], binary);
+        //imshow(window_name[0], img );
+        //imshow(window_name[2], binary);
 
         kulka = Mat::zeros( img.size(), CV_8UC3 );
         circle(kulka, srodek, 3, Scalar(255, 0, 0));
-        SetCursorPos(srodek.x*2, srodek.y*2);
+        if(mysz)
+            SetCursorPos(srodek.x*2, srodek.y*2);
         imshow("Kulka", kulka);
-        if(waitKey(10) == 'm')
+        key = waitKey(10);
+        if(key == 'c')
+            m = m=='l'?'p':'l';
+
+        /*if(waitKey(10) == 'm')
         {
             INPUT    Input={0};
             // left down
@@ -92,7 +130,7 @@ int main()
             Input.type      = INPUT_MOUSE;
             Input.mi.dwFlags  = MOUSEEVENTF_LEFTUP;
             SendInput(1,&Input,sizeof(INPUT));
-        }
+        }*/
     }
     capture.release();
     return 0;
