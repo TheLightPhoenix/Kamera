@@ -12,7 +12,9 @@ using namespace std;
 int main()
 {
     VideoCapture capture = VideoCapture(0);
-    string window_name [] = { "Kamera", "Contour", "Binary" };
+
+    string window_name [] = { "Kamera", "Contour", "Binary", "Kulka" };
+
     Mat frame, img, hsv_img, binary;
     Mat cont;
 
@@ -22,12 +24,14 @@ int main()
     vector<Mat> hsv_split;
     if(wyswietlanie)
     {
-        for ( int i = 0; i < 3; i++ ) namedWindow(window_name[i], CV_WINDOW_AUTOSIZE);
-        namedWindow("Kulka", CV_WINDOW_AUTOSIZE);
+        for ( int i = 0; i < 4; i++ ) namedWindow(window_name[i], CV_WINDOW_AUTOSIZE);
     }
 
     int lowerb = 255, upperb = 255;
-
+    int areaMax = 0, areaMin = 0;
+    float area = 0;
+    createTrackbar("AreaMax", "Kulka", &areaMax, 1000);
+    createTrackbar("AreaMin", "Kulka", &areaMin, 1000);
     Mat kulka;
     Point srodek;
     bool klikniecie = false;
@@ -83,9 +87,10 @@ int main()
 
         for( int i = 0; i< contours.size(); i++ )
         {
-            if ( abs(contourArea(Mat(contours[i]))) > max )
+            area = abs(contourArea(Mat(contours[i])));
+            if ( area > max && area > areaMin && area < areaMax)
             {
-                max = abs(contourArea(Mat(contours[i])));
+                max = area;
                 i_cont = i;
             }
         }
@@ -117,7 +122,7 @@ int main()
             imshow(window_name[1], drawing);
             imshow(window_name[0], img );
             imshow(window_name[2], binary);
-            imshow("Kulka", kulka);
+            imshow(window_name[3], kulka);
         }
 
         key = waitKey(1);
