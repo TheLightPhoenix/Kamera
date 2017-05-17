@@ -16,14 +16,20 @@ int main()
     Mat frame, img, hsv_img, binary;
     Mat cont;
 
-    bool mysz = true;
+    bool mysz = false;
+    bool wyswietlanie = true;
 
     vector<Mat> hsv_split;
-    //for ( int i = 0; i < 3; i++ ) namedWindow(window_name[i], CV_WINDOW_AUTOSIZE);
+    if(wyswietlanie)
+    {
+        for ( int i = 0; i < 3; i++ ) namedWindow(window_name[i], CV_WINDOW_AUTOSIZE);
+        namedWindow("Kulka", CV_WINDOW_AUTOSIZE);
+    }
+
     int lowerb = 255, upperb = 255;
     /*createTrackbar( "Thresh lb", window_name[2], &lowerb, 255, NULL );
     createTrackbar( "Thresh ub", window_name[2], &upperb, 255, NULL );*/
-    namedWindow("Kulka", CV_WINDOW_AUTOSIZE);
+
     Mat kulka;
     Point srodek;
     bool klikniecie = false;
@@ -102,18 +108,22 @@ int main()
             putText( img, s, Point(50, 50), CV_FONT_HERSHEY_COMPLEX, 1, Scalar(20, 40, 80), 3, 8 );
             drawContours( drawing,  contours, i_cont, Scalar(125, 125, 250), 2 );
         }
-        //imshow(window_name[1], drawing);
-        //***
 
-        //imshow(window_name[0], img );
-        //imshow(window_name[2], binary);
 
         kulka = Mat::zeros( img.size(), CV_8UC3 );
         circle(kulka, srodek, 3, Scalar(255, 0, 0));
         if(mysz)
             SetCursorPos(srodek.x*2, srodek.y*2);
-        imshow("Kulka", kulka);
-        key = waitKey(10);
+
+        if(wyswietlanie)
+        {
+            imshow(window_name[1], drawing);
+            imshow(window_name[0], img );
+            imshow(window_name[2], binary);
+            imshow("Kulka", kulka);
+        }
+
+        key = waitKey(1);
         if(key == 'c')
             m = m=='l'?'p':'l';
 
