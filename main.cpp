@@ -13,7 +13,7 @@ int main()
 {
     VideoCapture capture = VideoCapture(0);
 
-    string window_name [] = { "Kamera", "Contour", "Binary", "Kulka" };
+    string window_name [] = { "Kamera", "Contour", "Binary", "Kulka", "Okregi" };
 
     Mat frame, img, hsv_img, binary;
     Mat cont;
@@ -24,22 +24,29 @@ int main()
     vector<Mat> hsv_split;
     if(wyswietlanie)
     {
-        for ( int i = 0; i < 4; i++ ) namedWindow(window_name[i], CV_WINDOW_AUTOSIZE);
+        for ( int i = 0; i < 5; i++ ) namedWindow(window_name[i], CV_WINDOW_AUTOSIZE);
     }
 
     int lowerb = 255, upperb = 255;
     int areaMax = 6500, areaMin = 500;
     float area = 0;
+    int thres = 10;
+    int minR = 10, maxR = 20;
     createTrackbar("AreaMax", "Kulka", &areaMax, 10000);
     createTrackbar("AreaMin", "Kulka", &areaMin, 10000);
+    createTrackbar("canny", "Okregi", &thres, 100);
+    createTrackbar("minR", "Okregi", &minR, 100);
+    createTrackbar("maxR", "Okregi", &maxR, 100);
     Mat kulka;
     Point srodek;
     bool klikniecie = false;
     char m = 'l',key = 'p';
+    Mat src_gray, src;
     while ( key != 27 )
     {
         capture >> frame;
         flip(frame, img,1);
+        img.copyTo(src);
         cvtColor(img, hsv_img, CV_BGR2HSV);
         split(hsv_img, hsv_split);
         inRange(hsv_split[2], lowerb, upperb, binary);
@@ -110,7 +117,27 @@ int main()
             putText( img, s, Point(50, 50), CV_FONT_HERSHEY_COMPLEX, 1, Scalar(20, 40, 80), 3, 8 );
             drawContours( drawing,  contours, i_cont, Scalar(125, 125, 250), 2 );
         }
+        cvtColor( src, src_gray, CV_BGR2GRAY );
 
+        GaussianBlur( src_gray, src_gray, Size(9, 9), 2, 2 );
+
+        vector<Vec3f> circles;
+
+        /// Apply the Hough Transform to find the circles
+        if(thres > 0)
+            HoughCircles( src_gray, circles, CV_HOUGH_GRADIENT, 1, src_gray.rows/8, 200, thres, minR, maxR );
+
+        /// Draw the circles detected
+        for( size_t i = 0; i < circles.size(); i++ )
+        {
+            Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
+            int radius = cvRound(circles[i][2]);
+            // circle center
+            circle( src, center, 3, Scalar(0,255,0), -1, 8, 0 );
+            // circle outline
+            circle( src, center, radius, Scalar(0,0,255), 3, 8, 0 );
+            cout << 1 << endl;
+        }
 
         kulka = Mat::zeros( img.size(), CV_8UC3 );
         circle(kulka, srodek, 3, Scalar(255, 0, 0));
@@ -121,8 +148,9 @@ int main()
         {
             imshow(window_name[1], drawing);
             imshow(window_name[0], img );
-            imshow(window_name[2], binary);
+            imshow(window_name[2], hsv_split[2]);
             imshow(window_name[3], kulka);
+            imshow(window_name[4], src);
         }
 
         key = waitKey(1);
