@@ -27,8 +27,6 @@ int main()
     }
 
     int lowerb = 255, upperb = 255;
-    /*createTrackbar( "Thresh lb", window_name[2], &lowerb, 255, NULL );
-    createTrackbar( "Thresh ub", window_name[2], &upperb, 255, NULL );*/
 
     Mat kulka;
     Point srodek;
@@ -44,7 +42,6 @@ int main()
         blur(binary, binary, cv::Size(3,3) );
         erode(binary, binary, cv::Mat() );
 
-        //***
         vector<vector<Point> > contours;
         vector<Point> contours_poly;
         Rect boundRect;
@@ -126,21 +123,6 @@ int main()
         key = waitKey(1);
         if(key == 'c')
             m = m=='l'?'p':'l';
-
-        /*if(waitKey(10) == 'm')
-        {
-            INPUT    Input={0};
-            // left down
-            Input.type      = INPUT_MOUSE;
-            Input.mi.dwFlags  = MOUSEEVENTF_LEFTDOWN;
-            SendInput(1,&Input,sizeof(INPUT));
-
-            // left up
-            ZeroMemory(&Input,sizeof(INPUT));
-            Input.type      = INPUT_MOUSE;
-            Input.mi.dwFlags  = MOUSEEVENTF_LEFTUP;
-            SendInput(1,&Input,sizeof(INPUT));
-        }*/
     }
     capture.release();
     return 0;
