@@ -30,8 +30,8 @@ int main()
     int lowerb = 255, upperb = 255;
     int areaMax = 6500, areaMin = 500;
     float area = 0;
-    int thres = 10;
-    int minR = 10, maxR = 20;
+    int thres = 20;
+    int minR = 10, maxR = 36;
     createTrackbar("AreaMax", "Kulka", &areaMax, 10000);
     createTrackbar("AreaMin", "Kulka", &areaMin, 10000);
     createTrackbar("canny", "Okregi", &thres, 100);
@@ -148,7 +148,7 @@ int main()
         {
             imshow(window_name[1], drawing);
             imshow(window_name[0], img );
-            imshow(window_name[2], hsv_split[2]);
+            imshow(window_name[2], src_gray);
             imshow(window_name[3], kulka);
             imshow(window_name[4], src);
         }
