@@ -28,10 +28,10 @@ int main()
     }
 
     int lowerb = 255, upperb = 255;
-    int areaMax = 0, areaMin = 0;
+    int areaMax = 6500, areaMin = 500;
     float area = 0;
-    createTrackbar("AreaMax", "Kulka", &areaMax, 1000);
-    createTrackbar("AreaMin", "Kulka", &areaMin, 1000);
+    createTrackbar("AreaMax", "Kulka", &areaMax, 10000);
+    createTrackbar("AreaMin", "Kulka", &areaMin, 10000);
     Mat kulka;
     Point srodek;
     bool klikniecie = false;
