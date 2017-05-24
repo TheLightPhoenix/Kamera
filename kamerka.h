@@ -20,6 +20,8 @@ class Kamerka
         Kamerka();
         ~Kamerka();
 
+        cv::Point getPosition() const {return srodek;};
+
         void update();
 };
 
