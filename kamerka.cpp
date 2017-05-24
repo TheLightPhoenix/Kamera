@@ -76,7 +76,6 @@ void Kamerka::update()
         {
             klikniecie = true;
             INPUT    Input={0};
-            // left down
 
             Input.type      = INPUT_MOUSE;
             if(m=='l')
@@ -84,21 +83,19 @@ void Kamerka::update()
             else
                 Input.mi.dwFlags  = MOUSEEVENTF_RIGHTDOWN;
             SendInput(1,&Input,sizeof(INPUT));
-            cout << 0 << endl;
         }
 
         if(contours.size() > 0 && klikniecie)
         {
             klikniecie = false;
             INPUT    Input={0};
-            // left down
+
             Input.type      = INPUT_MOUSE;
             if(m=='l')
                 Input.mi.dwFlags  = MOUSEEVENTF_LEFTUP;
             else
                 Input.mi.dwFlags  = MOUSEEVENTF_RIGHTUP;
             SendInput(1,&Input,sizeof(INPUT));
-            cout << 1 << endl;
         }
     }
 
@@ -133,11 +130,9 @@ void Kamerka::update()
 
     vector<Vec3f> circles;
 
-    /// Apply the Hough Transform to find the circles
     if(thres > 0)
         HoughCircles( src_gray, circles, CV_HOUGH_GRADIENT, 1, src_gray.rows/8, 200, thres, minR, maxR );
 
-    /// Draw the circles detected
     for( size_t i = 0; i < circles.size(); i++ )
     {
         Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
@@ -146,7 +141,6 @@ void Kamerka::update()
         circle( src, center, 3, Scalar(0,255,0), -1, 8, 0 );
         // circle outline
         circle( src, center, radius, Scalar(0,0,255), 3, 8, 0 );
-        cout << 1 << endl;
     }
 
     kulka = Mat::zeros( img.size(), CV_8UC3 );
