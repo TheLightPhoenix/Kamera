@@ -4,6 +4,9 @@
 #include <opencv2/highgui/highgui.hpp>
 #include "opencv2/imgproc/imgproc.hpp"
 
+#include <thread>
+#include <iostream>
+
 class Kamerka
 {
     private:
@@ -19,8 +22,10 @@ class Kamerka
     public:
         Kamerka();
         ~Kamerka();
+        void nothing(){std::cout << "nothing";};
 
         cv::Point getPosition() const {return srodek;};
+        std::thread spawn(){return std::thread(&Kamerka::update, this);};
 
         void update();
 };

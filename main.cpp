@@ -12,10 +12,17 @@ int main()
 {
     char key = 'p';
     Kamerka cam;
-    while ( key != 27 )
+
+    thread tr = cam.spawn();
+    tr.detach();
+    //std::thread t([] { std::cout << "My first thread..." << std::endl; });
+    //t.detach();
+    cout << "taaaaaaak" << endl;
+
+    /*while ( key != 27 )
     {
         cam.update();
         key = waitKey(1);
-    }
+    }*/
     return 0;
 }

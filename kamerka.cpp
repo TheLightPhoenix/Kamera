@@ -33,7 +33,15 @@ Kamerka::Kamerka()
     thres = 20;
     minR = 10;
     maxR = 36;
+}
 
+Kamerka::~Kamerka()
+{
+    capture.release();
+}
+
+void Kamerka::update()
+{
     if(wyswietlanie)
     {
         for ( int i = 0; i < 5; i++ )
@@ -45,15 +53,8 @@ Kamerka::Kamerka()
         createTrackbar("minR", "Okregi", &minR, 100);
         createTrackbar("maxR", "Okregi", &maxR, 100);
     }
-}
-
-Kamerka::~Kamerka()
-{
-    capture.release();
-}
-
-void Kamerka::update()
-{
+    while(waitKey(1) != 27)
+    {
     capture >> frame;
     flip(frame, img,1);
     img.copyTo(src);
@@ -155,5 +156,6 @@ void Kamerka::update()
         imshow(window_name[2], src_gray);
         imshow(window_name[3], kulka);
         imshow(window_name[4], src);
+    }
     }
 }
